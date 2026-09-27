@@ -1,0 +1,117 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
+    background-color: #f4f4f5; 
+    color: #222;
+}
+
+header {
+    background-color: #ffffff;
+    padding: 20px;
+    border-bottom: 1px solid #e4e4e7;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    color: #1f6feb;
+    font-size: 2rem;
+}
+
+main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+section {
+    background-color: #ffffff;
+    padding: 24px;
+    margin-bottom: 24px;
+    border-radius: 8px;
+    border: 1px solid #e4e4e7;
+}
+
+section h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+input[type="radio"] {
+    margin-right: 6px;
+    cursor: pointer;
+}
+
+label[for^="type-"] {
+    display: inline-block;
+    margin-right: 24px;
+    margin-bottom: 0;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+input[type="number"], 
+select {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1rem;
+    font-family: inherit;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 20px;
+}
+
+input[type="number"]:focus, 
+select:focus {
+    border-color: #1f6feb;
+}
+
+.convert-btn {
+    display: block;
+    padding: 12px 24px;
+    border-radius: 6px;
+    background-color: #1f6feb;
+    color: #ffffff;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-bottom: 20px;
+}
+
+.convert-btn:hover {
+    background-color: #1158c7; 
+}
+
+section p {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+#result {
+    font-weight: bold;
+    color: #1f6feb;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 0.875rem;
+    color: #71717a;
+    background-color: #e4e4e7;
+}

@@ -2,59 +2,59 @@
 <html lang="uk">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Конвертер валют і одиниць</title>
-    <link rel="stylesheet" href="css/style.css">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Конвертер валют і одиниць</title>
+	<link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
-    <header>
-        <h1>Конвертер валют і одиниць виміру</h1>
-    </header>
-    
-    <main>
-        <section>
-            <h2>Вибір типу конвертації</h2>
-            <input type="radio" id="type-currency" name="conv-type" checked>
-            <label for="type-currency">Валюти</label>
-            
-            <input type="radio" id="type-length" name="conv-type">
-            <label for="type-length">Довжина</label>
-            
-            <input type="radio" id="type-weight" name="conv-type">
-            <label for="type-weight">Вага</label>
-        </section>
-        
-        <section>
-            <h2>Форма конвертації</h2>
-            <label for="amount-input">Введіть значення:</label>
-            <input type="number" id="amount-input" name="amount">
-            
-            <label for="from-currency">З валюти:</label>
-            <select id="from-currency" name="from-currency">
-                <option value="usd">USD</option>
-                <option value="eur">EUR</option>
-                <option value="uah">UAH</option>
-            </select>
-            
-            <label for="to-currency">У валюту:</label>
-            <select id="to-currency" name="to-currency">
-                <option value="uah">UAH</option>
-                <option value="usd">USD</option>
-                <option value="eur">EUR</option>
-            </select>
-            
-            <button type="button">Конвертувати</button>
-            <p>Результат: <span id="result">0</span></p>
-        </section>
-    </main>
+	<header>
+		<h1>Конвертер валют і одиниць виміру</h1>
+	</header>
 
-    <footer>
-        <p>Примітка: курс валют є орієнтовним. &copy; 2026</p>
-    </footer>
-    
-    <script src="js/app.js"></script>
+	<main>
+		<section>
+			<h2>Вибір типу конвертації</h2>
+			<input type="radio" id="type-currency" name="conv-type" checked>
+			<label for="type-currency">Валюти</label>
+
+			<input type="radio" id="type-length" name="conv-type">
+			<label for="type-length">Довжина</label>
+
+			<input type="radio" id="type-weight" name="conv-type">
+			<label for="type-weight">Вага</label>
+		</section>
+
+		<section>
+			<h2>Форма конвертації</h2>
+			<label for="amount-input">Введіть значення:</label>
+			<input type="number" id="amount-input" name="amount">
+
+			<label for="from-currency">З валюти:</label>
+			<select id="from-currency" name="from-currency">
+				<option value="usd">USD</option>
+				<option value="eur">EUR</option>
+				<option value="uah">UAH</option>
+			</select>
+
+			<label for="to-currency">У валюту:</label>
+			<select id="to-currency" name="to-currency">
+				<option value="uah">UAH</option>
+				<option value="usd">USD</option>
+				<option value="eur">EUR</option>
+			</select>
+
+			<button type="button" class="convert-btn">Конвертувати</button>
+			<p>Результат: <span id="result">0</span></p>
+		</section>
+	</main>
+
+	<footer>
+		<p>Примітка: курс валют є орієнтовним. &copy; 2026</p>
+	</footer>
+
+	<script src="js/app.js"></script>
 </body>
 
 </html>
