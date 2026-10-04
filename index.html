@@ -9,44 +9,61 @@
 </head>
 
 <body>
-	<header>
+	<header class="site-header">
 		<h1>Конвертер валют і одиниць виміру</h1>
 	</header>
 
-	<main>
-		<section>
+	<main class="layout">
+		<section class="converter-card">
 			<h2>Вибір типу конвертації</h2>
-			<input type="radio" id="type-currency" name="conv-type" checked>
-			<label for="type-currency">Валюти</label>
-
-			<input type="radio" id="type-length" name="conv-type">
-			<label for="type-length">Довжина</label>
-
-			<input type="radio" id="type-weight" name="conv-type">
-			<label for="type-weight">Вага</label>
+			<div class="radio-group">
+				<div class="radio-item">
+					<input type="radio" id="type-currency" name="conv-type" checked>
+					<label for="type-currency">Валюти</label>
+				</div>
+				<div class="radio-item">
+					<input type="radio" id="type-length" name="conv-type">
+					<label for="type-length">Довжина</label>
+				</div>
+				<div class="radio-item">
+					<input type="radio" id="type-weight" name="conv-type">
+					<label for="type-weight">Вага</label>
+				</div>
+			</div>
 		</section>
 
-		<section>
+		<section class="converter-card">
 			<h2>Форма конвертації</h2>
-			<label for="amount-input">Введіть значення:</label>
-			<input type="number" id="amount-input" name="amount">
+			
+			<div class="form-group">
+				<label for="amount-input">Введіть значення:</label>
+				<input type="number" id="amount-input" name="amount">
+			</div>
 
-			<label for="from-currency">З валюти:</label>
-			<select id="from-currency" name="from-currency">
-				<option value="usd">USD</option>
-				<option value="eur">EUR</option>
-				<option value="uah">UAH</option>
-			</select>
+			<div class="exchange-group">
+				<div class="currency-field">
+					<label for="from-currency">З валюти:</label>
+					<select id="from-currency" name="from-currency">
+						<option value="usd">USD</option>
+						<option value="eur">EUR</option>
+						<option value="uah">UAH</option>
+					</select>
+				</div>
 
-			<label for="to-currency">У валюту:</label>
-			<select id="to-currency" name="to-currency">
-				<option value="uah">UAH</option>
-				<option value="usd">USD</option>
-				<option value="eur">EUR</option>
-			</select>
+				<button type="button" class="swap-btn" aria-label="Поміняти місцями">⇅</button>
+
+				<div class="currency-field">
+					<label for="to-currency">У валюту:</label>
+					<select id="to-currency" name="to-currency">
+						<option value="uah">UAH</option>
+						<option value="usd">USD</option>
+						<option value="eur">EUR</option>
+					</select>
+				</div>
+			</div>
 
 			<button type="button" class="convert-btn">Конвертувати</button>
-			<p>Результат: <span id="result">0</span></p>
+			<p class="result-box">Результат: <span id="result">0</span></p>
 		</section>
 	</main>
 
