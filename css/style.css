@@ -1,14 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 *, *::before, *::after {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
-    font-family: system-ui, sans-serif;
-    font-size: 1rem;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 16px;
     line-height: 1.5;
-    background-color: #f4f4f5; 
-    color: #222;
+    background-color: #F4F5F4;
+    color: #18181B;
 }
 
 img {
@@ -17,53 +19,69 @@ img {
 }
 
 .site-header {
-    background-color: #ffffff;
-    padding: 16px;
-    border-bottom: 1px solid #e4e4e7;
-    text-align: center;
+    background-color: #FFFFFF;
+    padding: 16px 20px;
+    border-bottom: 1px solid #E4E4E7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
 .site-header h1 {
     margin: 0;
-    color: #1f6feb;
-    font-size: 1.5rem;
+    color: #166534;
+    font-size: 1.25rem;
+    font-weight: 700;
 }
 
 .layout {
-    padding: 16px;
+    padding: 24px 16px;
 }
 
 .converter-card {
-    background-color: #ffffff;
-    padding: 16px;
-    margin-bottom: 16px;
-    border-radius: 8px;
-    border: 1px solid #e4e4e7;
+    background-color: #FFFFFF;
+    padding: 20px;
+    margin-bottom: 24px;
+    border-radius: 12px;
+    border: 1px solid #E4E4E7;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
 }
 
 .converter-card h2 {
     margin-top: 0;
-    margin-bottom: 16px;
-    color: #333;
-    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #27272A;
+    font-size: 1.125rem;
+    font-weight: 600;
+    border-bottom: 2px solid #F4F4F5;
+    padding-bottom: 10px;
 }
 
 .radio-group {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
 }
 
 .radio-item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
-.radio-item input, 
-.radio-item label {
+.radio-item input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #166534;
     margin: 0;
     cursor: pointer;
+}
+
+.radio-item label {
+    cursor: pointer;
+    font-weight: 500;
+    color: #3F3F46;
 }
 
 .form-group, 
@@ -77,109 +95,129 @@ img {
     display: flex;
     flex-direction: column; 
     gap: 16px;
-    margin-bottom: 16px;
-    margin-top: 16px;
+    margin: 24px 0;
 }
 
 label {
     font-weight: 500;
+    color: #3F3F46; 
+    font-size: 0.875rem;
 }
 
 input[type="number"], 
 select {
     width: 100%;
-    padding: 12px;
-    font-size: 1.1rem;
+    height: 48px;
+    padding: 0 16px;
+    font-size: 1rem;
     font-family: inherit;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+    font-weight: 500;
+    color: #18181B;
+    background-color: #FFFFFF;
+    border: 1px solid #52525B;
+    border-radius: 8px;
     outline: none;
-    transition: border-color 0.2s;
+    transition: all 0.2s ease;
 }
 
 input[type="number"]:focus, 
 select:focus {
-    border-color: #1f6feb;
+    border-color: #166534;
+    box-shadow: 0 0 0 3px rgba(22, 101, 52, 0.15);
 }
 
 .swap-btn {
-    background-color: #e4e4e7;
-    border: none;
+    background-color: #F4F4F5;
+    color: #52525B;
+    border: 1px solid #D4D4D8;
     border-radius: 50%;
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     font-size: 1.2rem;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     align-self: center;
-    transition: background-color 0.2s;
+    transition: all 0.2s;
 }
 
 .swap-btn:hover {
-    background-color: #d4d4d8;
+    background-color: #E4E4E7;
+    color: #166534;
+    border-color: #A1A1AA;
 }
 
 .convert-btn {
     display: block;
     width: 100%;
-    padding: 12px 24px;
-    border-radius: 6px;
-    background-color: #1f6feb;
-    color: #ffffff;
+    height: 48px;
+    border-radius: 8px;
+    background-color: #166534;
+    color: #FFFFFF;
     border: none;
-    font-size: 1.1rem;
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s;
-    margin-bottom: 20px;
+    transition: background-color 0.2s, transform 0.1s;
+    margin-bottom: 24px;
 }
 
 .convert-btn:hover {
-    background-color: #1158c7; 
+    background-color: #14532D;
+}
+
+.convert-btn:active {
+    transform: translateY(1px);
 }
 
 .result-box {
     margin: 0;
-    font-size: 1.1rem;
+    font-size: 1rem;
     text-align: center;
+    color: #52525B;
+    background-color: #F4F5F4;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px dashed #D4D4D8;
 }
 
 #result {
-    font-weight: bold;
-    color: #1f6feb;
-    font-size: 1.2rem;
+    display: block;
+    font-weight: 700;
+    color: #166534;
+    font-size: 1.5rem;
+    margin-top: 4px;
 }
 
 footer {
     text-align: center;
-    padding: 20px;
+    padding: 24px;
     font-size: 0.875rem;
-    color: #71717a;
-    background-color: #e4e4e7;
+    color: #71717A;
 }
 
 @media (min-width: 600px) {
     .site-header h1 {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
     }
 
     .layout {
-        padding: 24px;
+        padding: 32px 24px;
     }
 
     .converter-card {
-        padding: 24px;
+        padding: 28px;
     }
 
     .radio-group {
         flex-direction: row;
-        gap: 24px;
+        gap: 32px;
     }
 
     .exchange-group {
         flex-direction: row; 
-        align-items: flex-end;
+        align-items: center;
         gap: 16px;
     }
 
@@ -188,29 +226,25 @@ footer {
     }
 
     .swap-btn {
-        margin-bottom: 4px; 
+        margin-top: 24px; 
         transform: rotate(90deg); 
     }
 }
 
 @media (min-width: 1024px) {
     .layout {
-        max-width: 800px; 
-        margin: 0 auto;   
-        padding: 40px 20px; 
+        max-width: 680px; 
+        margin: 40px auto;   
     }
 
     .converter-card {
-        padding: 32px; 
-        border-radius: 12px;
-    }
-
-    .site-header h1 {
-        font-size: 2rem;
+        padding: 40px; 
+        border-radius: 16px;
+        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.01);
     }
 
     .convert-btn {
-        width: auto; 
-        margin: 24px auto; 
+        width: 50%; 
+        margin: 0 auto 24px auto; 
     }
 }
