@@ -1,7 +1,38 @@
 console.log('script.js підключено');
 
+const placeholder = document.querySelector('#rates-list li');
+if (placeholder) {
+    placeholder.remove();
+}
+
 const rates = { USD: 1, EUR: 0.92, UAH: 41.5 };
 const threshold = 10000;
+const rateThreshold = 10;
+
+const listContainer = document.querySelector('#rates-list');
+const ratesCount = document.querySelector('#rates-count');
+
+// Функція генерує список курсів валют на сторінці та оновлює лічильник кількості валют
+function renderRates(ratesObj) {
+    listContainer.innerHTML = '';
+    const entries = Object.entries(ratesObj);
+
+    for (const [currency, rate] of entries) {
+        const li = document.createElement('li');
+        li.textContent = `${currency}: ${rate}`;
+        li.dataset.rate = rate;
+
+        if (rate > rateThreshold) {
+            li.classList.add('big-rate');
+        }
+
+        listContainer.append(li);
+    }
+
+    ratesCount.textContent = `Кількість валют у списку: ${entries.length}`;
+}
+
+renderRates(rates);
 
 // Функція перебирає всі ключі об'єкта курсів через for...of та виводить курси і підсумкову інформацію
 function showAllRates(ratesObj) {
