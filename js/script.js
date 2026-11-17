@@ -8,9 +8,16 @@ if (placeholder) {
 const rates = { USD: 1, EUR: 0.92, UAH: 41.5 };
 const threshold = 10000;
 const rateThreshold = 10;
+const history = [];
 
 const listContainer = document.querySelector('#rates-list');
 const ratesCount = document.querySelector('#rates-count');
+const form = document.querySelector('#converter-form');
+const amountInput = document.querySelector('#amount-input');
+const fromSelect = document.querySelector('#from-currency');
+const toSelect = document.querySelector('#to-currency');
+const resultSpan = document.querySelector('#result');
+const historyList = document.querySelector('#history-list');
 
 // Функція генерує список курсів валют на сторінці та оновлює лічильник кількості валют
 function renderRates(ratesObj) {
@@ -75,3 +82,68 @@ const amount2 = 50;
 const resultEUR = convert(amount2, rates.EUR);
 console.log(`${amount2} USD = ${resultEUR} EUR`);
 checkAmountSize(resultEUR, 'EUR', threshold);
+
+// Функція виводить список історії конвертацій на сторінку
+function renderHistory(items) {
+    historyList.innerHTML = '';
+
+    for (const item of items) {
+        const li = document.createElement('li');
+        li.textContent = `${item.amount} ${item.from} = ${item.result} ${item.to}`;
+        li.dataset.result = item.result;
+
+        if (item.result > threshold) {
+            li.classList.add('big-rate');
+        }
+
+        historyList.append(li);
+    }
+}
+
+// Функція перераховує та оновлює результат при зміні валюти
+function updateInstantResult() {
+    const amount = Number(amountInput.value);
+    const from = fromSelect.value.toUpperCase();
+    const to = toSelect.value.toUpperCase();
+
+    if (amountInput.value === '' || amount <= 0) {
+        resultSpan.textContent = '0';
+        return;
+    }
+
+    const amountInUSD = amount / rates[from];
+    const converted = Number(convert(amountInUSD, rates[to]).toFixed(2));
+    resultSpan.textContent = `${converted} ${to}`;
+}
+
+// Обробник відправки форми: обчислює результат і додає запис в історію
+form.addEventListener('submit', event => {
+    event.preventDefault();
+
+    const amount = Number(amountInput.value);
+    const from = fromSelect.value.toUpperCase();
+    const to = toSelect.value.toUpperCase();
+
+    const amountInUSD = amount / rates[from];
+    const result = Number(convert(amountInUSD, rates[to]).toFixed(2));
+    resultSpan.textContent = `${result} ${to}`;
+
+    const newConversion = { amount, from, to, result };
+    history.push(newConversion);
+    renderHistory(history);
+
+    form.reset();
+});
+
+// Перевірка введеної суми на додатне значення
+amountInput.addEventListener('input', () => {
+    if (amountInput.value !== '' && Number(amountInput.value) <= 0) {
+        amountInput.setCustomValidity('Сума має бути додатною');
+    } else {
+        amountInput.setCustomValidity('');
+    }
+});
+
+// Миттєвий перерахунок при зміні валюти у списку
+fromSelect.addEventListener('change', updateInstantResult);
+toSelect.addEventListener('change', updateInstantResult);

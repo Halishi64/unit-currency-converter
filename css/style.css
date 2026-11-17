@@ -190,7 +190,8 @@ select:focus {
     margin-top: 4px;
 }
 
-#rates-list {
+#rates-list,
+#history-list {
     list-style: none;
     padding: 0;
     margin: 0 0 16px 0;
@@ -199,7 +200,12 @@ select:focus {
     gap: 8px;
 }
 
-#rates-list li {
+#history-list {
+    margin-bottom: 0;
+}
+
+#rates-list li,
+#history-list li {
     padding: 12px 16px;
     background-color: #F4F5F4;
     color: #18181B;
@@ -208,7 +214,8 @@ select:focus {
     font-weight: 500;
 }
 
-#rates-list li.big-rate {
+#rates-list li.big-rate,
+#history-list li.big-rate {
     background-color: #DCFCE7;
     color: #14532D;
     border-color: #166534;
