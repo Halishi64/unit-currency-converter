@@ -77,6 +77,12 @@
 
 		<section class="converter-card">
 			<h2>Курси валют</h2>
+			<div class="rates-controls">
+				<p id="rates-meta">Базова валюта: -, дата: -</p>
+				<button type="button" id="refresh-btn" class="refresh-btn">Оновити</button>
+			</div>
+			<p id="loading-status" class="status-text" hidden>Завантаження...</p>
+			<p id="error-message" class="error-text" hidden></p>
 			<ul id="rates-list">
 				<li>USD: 1</li>
 			</ul>

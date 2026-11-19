@@ -1,5 +1,7 @@
 console.log('script.js підключено');
 
+const API_URL = 'https://api.frankfurter.dev/v1/latest?from=USD&to=EUR';
+
 const placeholder = document.querySelector('#rates-list li');
 if (placeholder) {
     placeholder.remove();
@@ -12,6 +14,10 @@ const history = [];
 
 const listContainer = document.querySelector('#rates-list');
 const ratesCount = document.querySelector('#rates-count');
+const ratesMeta = document.querySelector('#rates-meta');
+const refreshBtn = document.querySelector('#refresh-btn');
+const loadingStatus = document.querySelector('#loading-status');
+const errorMessage = document.querySelector('#error-message');
 const form = document.querySelector('#converter-form');
 const amountInput = document.querySelector('#amount-input');
 const fromSelect = document.querySelector('#from-currency');
@@ -39,7 +45,46 @@ function renderRates(ratesObj) {
     ratesCount.textContent = `Кількість валют у списку: ${entries.length}`;
 }
 
-renderRates(rates);
+// Завантаження курсів валют із Frankfurter API (https://api.frankfurter.dev/)
+async function loadRates() {
+    errorMessage.hidden = true;
+    loadingStatus.hidden = false;
+    refreshBtn.disabled = true;
+
+    try {
+        const response = await fetch(API_URL);
+
+        if (!response.ok) {
+            if (response.status === 422 || response.status === 404) {
+                throw new Error(`Непідтримуваний код валюти (код ${response.status})`);
+            }
+            throw new Error(`Сервер відповів кодом ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log(data);
+
+        Object.assign(rates, data.rates);
+        ratesMeta.textContent = `Базова валюта: ${data.base}, дата: ${data.date}`;
+        renderRates(data.rates);
+    } catch (error) {
+        if (error.message.includes('Непідтримуваний код валюти')) {
+            errorMessage.textContent = 'Перевірте код валюти';
+        } else {
+            errorMessage.textContent = 'Не вдалося завантажити курси валют. Спробуйте пізніше.';
+        }
+        errorMessage.hidden = false;
+        console.error(error);
+    } finally {
+        loadingStatus.hidden = true;
+        refreshBtn.disabled = false;
+    }
+}
+
+loadRates();
+
+// Повторне завантаження курсів по кнопці «Оновити»
+refreshBtn.addEventListener('click', loadRates);
 
 // Функція перебирає всі ключі об'єкта курсів через for...of та виводить курси і підсумкову інформацію
 function showAllRates(ratesObj) {
