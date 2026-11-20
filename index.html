@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Конвертер валют і одиниць</title>
 	<link rel="stylesheet" href="css/style.css">
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js" defer></script>
 	<script src="js/script.js" defer></script>
 </head>
 
@@ -14,7 +15,7 @@
 		<h1>Конвертер валют і одиниць виміру</h1>
 	</header>
 
-	<main class="layout">
+	<main id="app" class="layout">
 		<section class="converter-card">
 			<h2>Вибір типу конвертації</h2>
 			<div class="radio-group">
@@ -33,60 +34,37 @@
 			</div>
 		</section>
 
-		<section class="converter-card">
-			<h2>Форма конвертації</h2>
-			
-			<form id="converter-form">
-				<div class="form-group">
-					<label for="amount-input">Введіть значення:</label>
-					<input type="number" id="amount-input" name="amount" min="0.01" step="0.01" required>
-				</div>
-
-				<div class="exchange-group">
-					<div class="currency-field">
-						<label for="from-currency">З валюти:</label>
-						<select id="from-currency" name="from-currency">
-							<option value="usd">USD</option>
-							<option value="eur">EUR</option>
-							<option value="uah">UAH</option>
-						</select>
-					</div>
-
-					<button type="button" class="swap-btn" aria-label="Поміняти місцями">⇅</button>
-
-					<div class="currency-field">
-						<label for="to-currency">У валюту:</label>
-						<select id="to-currency" name="to-currency">
-							<option value="uah">UAH</option>
-							<option value="usd">USD</option>
-							<option value="eur">EUR</option>
-						</select>
-					</div>
-				</div>
-
-				<button type="submit" class="convert-btn">Конвертувати</button>
-			</form>
-
-			<p class="result-box">Результат: <span id="result">0</span></p>
-		</section>
+		<converter-form :rates="rates" @add-history="addHistory"></converter-form>
 
 		<section class="converter-card">
 			<h2>Історія конвертацій</h2>
-			<ul id="history-list"></ul>
+			<p v-if="history.length === 0" class="empty-text">Історія поки порожня</p>
+			<ul id="history-list" v-else>
+				<li
+					v-for="item in history"
+					:key="item.id"
+					:data-result="item.result"
+					:class="{ 'big-rate': item.result > threshold }"
+				>
+					{{ item.amount }} {{ item.from }} = {{ item.result }} {{ item.to }}
+				</li>
+			</ul>
 		</section>
 
 		<section class="converter-card">
 			<h2>Курси валют</h2>
 			<div class="rates-controls">
-				<p id="rates-meta">Базова валюта: -, дата: -</p>
-				<button type="button" id="refresh-btn" class="refresh-btn">Оновити</button>
+				<p id="rates-meta">Базова валюта: {{ metaBase }}, дата: {{ metaDate }}</p>
+				<button type="button" id="refresh-btn" class="refresh-btn" :disabled="loading" @click="loadRates">
+					Оновити
+				</button>
 			</div>
-			<p id="loading-status" class="status-text" hidden>Завантаження...</p>
-			<p id="error-message" class="error-text" hidden></p>
-			<ul id="rates-list">
-				<li>USD: 1</li>
-			</ul>
-			<p id="rates-count">Кількість валют у списку: 0</p>
+			<p v-if="loading" id="loading-status" class="status-text">Завантаження...</p>
+			<p v-if="errorMessage" id="error-message" class="error-text">{{ errorMessage }}</p>
+
+			<rates-list :items="rates" :threshold="rateThreshold" @toggle-pin="togglePin"></rates-list>
+
+			<p id="rates-count">Кількість валют у списку: {{ rates.length }}</p>
 		</section>
 	</main>
 

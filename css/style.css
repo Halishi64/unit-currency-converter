@@ -243,6 +243,11 @@ select:focus {
     font-weight: 500;
 }
 
+.empty-text {
+    margin: 0;
+    color: #52525B;
+}
+
 #rates-list,
 #history-list {
     list-style: none;
@@ -267,12 +272,20 @@ select:focus {
     font-weight: 500;
 }
 
+#rates-list li {
+    cursor: pointer;
+}
+
 #rates-list li.big-rate,
 #history-list li.big-rate {
     background-color: #DCFCE7;
     color: #14532D;
     border-color: #166534;
     font-weight: 700;
+}
+
+#rates-list li.pinned-rate {
+    border: 2px solid #18181B;
 }
 
 #rates-count {
