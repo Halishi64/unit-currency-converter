@@ -288,6 +288,55 @@ select:focus {
     border: 2px solid #18181B;
 }
 
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.history-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.history-time {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: #3F3F46;
+}
+
+.history-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.item-btn {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #52525B;
+    background-color: #FFFFFF;
+    color: #18181B;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.item-btn:hover {
+    background-color: #E4E4E7;
+}
+
+.item-btn-delete {
+    border-color: #DC2626;
+    color: #991B1B;
+}
+
+.item-btn-delete:hover {
+    background-color: #FEE2E2;
+}
+
 #rates-count {
     margin: 0;
     font-weight: 600;

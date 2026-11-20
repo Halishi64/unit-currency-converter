@@ -1,6 +1,114 @@
 // Обрав Vue 3, бо підключається одним скриптом через CDN без Babel і має computed для автоперерахунку
 const API_URL = 'https://api.frankfurter.dev/v1/latest?from=USD&to=EUR';
 
+// Ключі localStorage і налаштування IndexedDB (модель запису: id, from, to, amount, result, timestamp)
+const STORAGE_KEY = 'converterHistory';
+const MIGRATED_KEY = 'historyMigrated';
+const DB_NAME = 'ConverterDB';
+const DB_VERSION = 1;
+const STORE_NAME = 'history';
+
+// Збереження історії в localStorage
+function saveToLocalStorage(items) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+}
+
+// Завантаження історії з localStorage з перевіркою JSON
+function loadFromLocalStorage() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+    } catch (error) {
+        console.error('Пошкоджені дані в localStorage:', error);
+        return [];
+    }
+}
+
+// Відкриття бази IndexedDB та створення сховища history з autoIncrement
+function openDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+        request.onupgradeneeded = event => {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
+                db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+            }
+        };
+
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+// Додавання нового запису в IndexedDB
+async function addItem(item) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const request = tx.objectStore(STORE_NAME).put(item);
+        tx.oncomplete = () => resolve(request.result);
+        tx.onerror = () => reject(tx.error);
+    });
+}
+
+// Оновлення наявного запису в IndexedDB через put
+async function updateItem(item) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        tx.objectStore(STORE_NAME).put(item);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+    });
+}
+
+// Отримання всіх записів історії з IndexedDB
+async function getAllItems() {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const request = tx.objectStore(STORE_NAME).getAll();
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+// Видалення запису з IndexedDB за id
+async function deleteItem(id) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        tx.objectStore(STORE_NAME).delete(id);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+    });
+}
+
+// Одноразова міграція даних із localStorage в IndexedDB
+async function migrateFromLocalStorage() {
+    if (localStorage.getItem(MIGRATED_KEY) === 'true') {
+        return;
+    }
+
+    const existing = await getAllItems();
+    const saved = loadFromLocalStorage();
+
+    if (existing.length === 0 && saved.length > 0) {
+        for (const item of saved) {
+            await addItem({
+                from: item.from,
+                to: item.to,
+                amount: item.amount,
+                result: item.result,
+                timestamp: item.timestamp || Date.now()
+            });
+        }
+    }
+
+    localStorage.setItem(MIGRATED_KEY, 'true');
+}
+
 // Форма конвертації
 const ConverterForm = {
     props: ['rates'],
@@ -42,11 +150,11 @@ const ConverterForm = {
             }
 
             this.$emit('add-history', {
-                id: Date.now(),
-                amount: value,
                 from: this.fromUnit,
                 to: this.toUnit,
-                result: this.result
+                amount: value,
+                result: this.result,
+                timestamp: Date.now()
             });
         }
     },
@@ -128,18 +236,95 @@ Vue.createApp({
             metaBase: 'USD',
             metaDate: '-',
             loading: false,
-            errorMessage: ''
+            errorMessage: '',
+            storageError: ''
         };
     },
     methods: {
+        formatTime(timestamp) {
+            return new Date(timestamp).toLocaleString('uk-UA');
+        },
         togglePin(id) {
             const item = this.rates.find(r => r.id === id);
             if (item) {
                 item.pinned = !item.pinned;
             }
         },
-        addHistory(record) {
-            this.history.push(record);
+        // Отримуємо записи з IndexedDB, сортуємо за timestamp і беремо останні 10
+        async refreshHistory() {
+            const items = await getAllItems();
+            this.history = items
+                .sort((a, b) => b.timestamp - a.timestamp)
+                .slice(0, 10);
+            saveToLocalStorage(this.history);
+        },
+        async addHistory(record) {
+            try {
+                this.storageError = '';
+                await addItem({
+                    from: record.from,
+                    to: record.to,
+                    amount: record.amount,
+                    result: record.result,
+                    timestamp: record.timestamp
+                });
+                await this.refreshHistory();
+            } catch (error) {
+                this.storageError = 'Не вдалося зберегти запис у IndexedDB. Збережено в localStorage.';
+                console.error(error);
+                this.history.unshift({ id: Date.now(), ...record });
+                this.history = this.history.slice(0, 10);
+                saveToLocalStorage(this.history);
+            }
+        },
+        async recalculateItem(item) {
+            const fromRate = this.rates.find(r => r.code === item.from);
+            const toRate = this.rates.find(r => r.code === item.to);
+            if (!fromRate || !toRate) {
+                return;
+            }
+
+            const newResult = Number(((item.amount / fromRate.rate) * toRate.rate).toFixed(2));
+            const updated = {
+                id: item.id,
+                from: item.from,
+                to: item.to,
+                amount: item.amount,
+                result: newResult,
+                timestamp: Date.now()
+            };
+
+            try {
+                this.storageError = '';
+                await updateItem(updated);
+                await this.refreshHistory();
+            } catch (error) {
+                this.storageError = 'Не вдалося оновити запис у локальній базі даних.';
+                console.error(error);
+            }
+        },
+        async removeHistoryItem(id) {
+            try {
+                this.storageError = '';
+                await deleteItem(id);
+                await this.refreshHistory();
+            } catch (error) {
+                this.storageError = 'Не вдалося видалити запис із локальної бази даних.';
+                console.error(error);
+            }
+        },
+        async initStorage() {
+            try {
+                this.storageError = '';
+                await migrateFromLocalStorage();
+                await this.refreshHistory();
+            } catch (error) {
+                this.storageError = 'Не вдалося відкрити IndexedDB (можливо, увімкнено приватний режим). Завантажено дані з localStorage.';
+                console.error(error);
+                this.history = loadFromLocalStorage()
+                    .sort((a, b) => b.timestamp - a.timestamp)
+                    .slice(0, 10);
+            }
         },
         async loadRates() {
             this.errorMessage = '';
@@ -179,27 +364,6 @@ Vue.createApp({
     },
     mounted() {
         this.loadRates();
+        this.initStorage();
     }
 }).mount('#app');
-
-/*
-// Старий ручний рендер із 7 лаби, замінив на компонент RatesList
-function renderRates(ratesObj) {
-    listContainer.innerHTML = '';
-    const entries = Object.entries(ratesObj);
-
-    for (const [currency, rate] of entries) {
-        const li = document.createElement('li');
-        li.textContent = `${currency}: ${rate}`;
-        li.dataset.rate = rate;
-
-        if (rate > rateThreshold) {
-            li.classList.add('big-rate');
-        }
-
-        listContainer.append(li);
-    }
-
-    ratesCount.textContent = `Кількість валют у списку: ${entries.length}`;
-}
-*/

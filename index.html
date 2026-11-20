@@ -37,16 +37,25 @@
 		<converter-form :rates="rates" @add-history="addHistory"></converter-form>
 
 		<section class="converter-card">
-			<h2>Історія конвертацій</h2>
+			<h2>Історія конвертацій (останні 10)</h2>
+			<p v-if="storageError" id="storage-error" class="error-text">{{ storageError }}</p>
 			<p v-if="history.length === 0" class="empty-text">Історія поки порожня</p>
 			<ul id="history-list" v-else>
 				<li
 					v-for="item in history"
 					:key="item.id"
+					class="history-item"
 					:data-result="item.result"
 					:class="{ 'big-rate': item.result > threshold }"
 				>
-					{{ item.amount }} {{ item.from }} = {{ item.result }} {{ item.to }}
+					<div class="history-info">
+						<span>{{ item.amount }} {{ item.from }} = {{ item.result }} {{ item.to }}</span>
+						<small class="history-time">{{ formatTime(item.timestamp) }}</small>
+					</div>
+					<div class="history-actions">
+						<button type="button" class="item-btn" @click="recalculateItem(item)">Оновити</button>
+						<button type="button" class="item-btn item-btn-delete" @click="removeHistoryItem(item.id)">Видалити</button>
+					</div>
 				</li>
 			</ul>
 		</section>
