@@ -237,7 +237,10 @@ Vue.createApp({
             metaDate: '-',
             loading: false,
             errorMessage: '',
-            storageError: ''
+            storageError: '',
+            animationId: null,
+            animProgress: 1,
+            isAnimating: false
         };
     },
     methods: {
@@ -250,6 +253,126 @@ Vue.createApp({
                 item.pinned = !item.pinned;
             }
         },
+        // Малювання міні-графіка останніх результатів конвертації на Canvas
+        drawChart(progress = 1) {
+            const canvas = this.$refs.historyChart;
+            if (!canvas) {
+                return;
+            }
+
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+            const padX = 36;
+            const padY = 28;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Беремо записи з history у хронологічному порядку (від старіших до новіших)
+            const points = this.history.slice().reverse();
+
+            if (points.length === 0) {
+                ctx.fillStyle = '#52525B';
+                ctx.font = '14px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('Додайте конвертації, щоб побачити графік', w / 2, h / 2);
+                return;
+            }
+
+            const values = points.map(item => Number(item.result));
+            const minVal = Math.min(...values);
+            const maxVal = Math.max(...values);
+            const range = maxVal - minVal || 1;
+            const plotW = w - padX * 2;
+            const plotH = h - padY * 2;
+            const baseY = h - padY;
+
+            // Сітка та базова вісь
+            ctx.save();
+            ctx.strokeStyle = '#E4E4E7';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(padX, padY);
+            ctx.lineTo(padX, baseY);
+            ctx.lineTo(w - padX, baseY);
+            ctx.stroke();
+
+            // Координати точок з урахуванням поточного прогресу анімації
+            const coords = points.map((item, idx) => {
+                const x = points.length === 1
+                    ? w / 2
+                    : padX + (idx / (points.length - 1)) * plotW;
+                const norm = (Number(item.result) - minVal) / range;
+                const targetY = points.length === 1
+                    ? h / 2
+                    : baseY - norm * plotH;
+                const y = baseY - (baseY - targetY) * progress;
+                return { x, y, value: item.result, to: item.to };
+            });
+
+            // Лінія графіка
+            ctx.strokeStyle = '#166534';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            coords.forEach((pt, idx) => {
+                if (idx === 0) {
+                    ctx.moveTo(pt.x, pt.y);
+                } else {
+                    ctx.lineTo(pt.x, pt.y);
+                }
+            });
+            ctx.stroke();
+
+            // Точки та підписи значень
+            ctx.fillStyle = '#166534';
+            ctx.font = '11px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            coords.forEach(pt => {
+                ctx.beginPath();
+                ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillText(String(pt.value), pt.x, pt.y - 10);
+            });
+
+            ctx.restore();
+        },
+        // Запуск циклу анімації через requestAnimationFrame
+        startChartAnimation() {
+            this.stopChartAnimation();
+            this.animProgress = 0;
+            this.isAnimating = true;
+
+            const step = () => {
+                this.animProgress += 0.04;
+
+                if (this.animProgress >= 1) {
+                    this.animProgress = 1;
+                    this.drawChart(1);
+                    this.stopChartAnimation();
+                    return;
+                }
+
+                this.drawChart(this.animProgress);
+                this.animationId = requestAnimationFrame(step);
+            };
+
+            this.animationId = requestAnimationFrame(step);
+        },
+        // Зупинка анімації через cancelAnimationFrame
+        stopChartAnimation() {
+            if (this.animationId !== null) {
+                cancelAnimationFrame(this.animationId);
+                this.animationId = null;
+            }
+            this.isAnimating = false;
+        },
+        toggleChartAnimation() {
+            if (this.isAnimating) {
+                this.stopChartAnimation();
+            } else {
+                this.startChartAnimation();
+            }
+        },
         // Отримуємо записи з IndexedDB, сортуємо за timestamp і беремо останні 10
         async refreshHistory() {
             const items = await getAllItems();
@@ -257,6 +380,7 @@ Vue.createApp({
                 .sort((a, b) => b.timestamp - a.timestamp)
                 .slice(0, 10);
             saveToLocalStorage(this.history);
+            this.startChartAnimation();
         },
         async addHistory(record) {
             try {
@@ -275,6 +399,7 @@ Vue.createApp({
                 this.history.unshift({ id: Date.now(), ...record });
                 this.history = this.history.slice(0, 10);
                 saveToLocalStorage(this.history);
+                this.startChartAnimation();
             }
         },
         async recalculateItem(item) {
@@ -324,6 +449,7 @@ Vue.createApp({
                 this.history = loadFromLocalStorage()
                     .sort((a, b) => b.timestamp - a.timestamp)
                     .slice(0, 10);
+                this.startChartAnimation();
             }
         },
         async loadRates() {
@@ -365,5 +491,8 @@ Vue.createApp({
     mounted() {
         this.loadRates();
         this.initStorage();
+    },
+    beforeUnmount() {
+        this.stopChartAnimation();
     }
 }).mount('#app');

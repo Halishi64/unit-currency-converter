@@ -37,6 +37,17 @@
 		<converter-form :rates="rates" @add-history="addHistory"></converter-form>
 
 		<section class="converter-card">
+			<div class="chart-header">
+				<h2>Графік історії конвертацій</h2>
+				<button type="button" id="chart-toggle-btn" class="item-btn" @click="toggleChartAnimation">
+					{{ isAnimating ? 'Стоп' : 'Анімувати' }}
+				</button>
+			</div>
+			<canvas ref="historyChart" id="history-chart" width="580" height="200"></canvas>
+			<p class="chart-hint">Останні значення результатів з історії (зліва направо за часом)</p>
+		</section>
+
+		<section class="converter-card">
 			<h2>Історія конвертацій (останні 10)</h2>
 			<p v-if="storageError" id="storage-error" class="error-text">{{ storageError }}</p>
 			<p v-if="history.length === 0" class="empty-text">Історія поки порожня</p>

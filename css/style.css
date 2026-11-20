@@ -58,6 +58,37 @@ img {
     padding-bottom: 10px;
 }
 
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    border-bottom: 2px solid #F4F4F5;
+    padding-bottom: 10px;
+}
+
+.chart-header h2 {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+#history-chart {
+    width: 100%;
+    height: auto;
+    display: block;
+    background-color: #FAFAFA;
+    border: 1px solid #D4D4D8;
+    border-radius: 8px;
+}
+
+.chart-hint {
+    margin: 8px 0 0 0;
+    font-size: 0.8rem;
+    color: #52525B;
+}
+
 .radio-group {
     display: flex;
     flex-direction: column;
