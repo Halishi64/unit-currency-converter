@@ -144,10 +144,16 @@ async function fetchRates() {
     const response = await fetch(API_URL);
 
     if (!response.ok) {
-        if (response.status === 422 || response.status === 404) {
-            throw new Error(`Непідтримуваний код валюти (код ${response.status})`);
+        let serverMessage = `Сервер відповів кодом ${response.status}`;
+        try {
+            const errData = await response.json();
+            if (errData && errData.error) {
+                serverMessage = errData.error;
+            }
+        } catch (parseError) {
+            console.error(parseError);
         }
-        throw new Error(`Сервер відповів кодом ${response.status}`);
+        throw new Error(serverMessage);
     }
 
     const data = await response.json();
@@ -533,6 +539,9 @@ function renderHome(container) {
             },
             async loadRates() {
                 this.errorMessage = '';
+                if (this.$refs.errorEl) {
+                    this.$refs.errorEl.textContent = '';
+                }
                 this.loading = true;
 
                 try {
@@ -540,10 +549,10 @@ function renderHome(container) {
                     this.metaBase = appState.metaBase;
                     this.metaDate = appState.metaDate;
                 } catch (error) {
-                    if (error.message.includes('Непідтримуваний код валюти')) {
-                        this.errorMessage = 'Перевірте код валюти';
-                    } else {
-                        this.errorMessage = 'Не вдалося завантажити курси валют. Спробуйте пізніше.';
+                    this.errorMessage = error.message || 'Не вдалося завантажити курси валют. Спробуйте пізніше.';
+                    if (this.$refs.errorEl) {
+                        // Вивід тексту помилки сервера
+                        this.$refs.errorEl.textContent = this.errorMessage;
                     }
                     console.error(error);
                 } finally {
@@ -597,7 +606,7 @@ function renderHome(container) {
                     </button>
                 </div>
                 <p v-if="loading" id="loading-status" class="status-text">Завантаження...</p>
-                <p v-if="errorMessage" id="error-message" class="error-text">{{ errorMessage }}</p>
+                <p ref="errorEl" id="error-message" class="error-text" v-show="errorMessage"></p>
 
                 <rates-list :items="rates" :threshold="rateThreshold" @toggle-pin="togglePin"></rates-list>
 
