@@ -12,81 +12,16 @@
 
 <body>
 	<header class="site-header">
-		<h1>Конвертер валют і одиниць виміру</h1>
+		<div class="header-inner">
+			<h1>Конвертер валют і одиниць виміру</h1>
+			<nav class="site-nav" aria-label="Головна навігація">
+				<a href="#/" data-link class="nav-link">Конвертер</a>
+				<a href="#/history" data-link class="nav-link">Історія</a>
+			</nav>
+		</div>
 	</header>
 
-	<main id="app" class="layout">
-		<section class="converter-card">
-			<h2>Вибір типу конвертації</h2>
-			<div class="radio-group">
-				<div class="radio-item">
-					<input type="radio" id="type-currency" name="conv-type" checked>
-					<label for="type-currency">Валюти</label>
-				</div>
-				<div class="radio-item">
-					<input type="radio" id="type-length" name="conv-type">
-					<label for="type-length">Довжина</label>
-				</div>
-				<div class="radio-item">
-					<input type="radio" id="type-weight" name="conv-type">
-					<label for="type-weight">Вага</label>
-				</div>
-			</div>
-		</section>
-
-		<converter-form :rates="rates" @add-history="addHistory"></converter-form>
-
-		<section class="converter-card">
-			<div class="chart-header">
-				<h2>Графік історії конвертацій</h2>
-				<button type="button" id="chart-toggle-btn" class="item-btn" @click="toggleChartAnimation">
-					{{ isAnimating ? 'Стоп' : 'Анімувати' }}
-				</button>
-			</div>
-			<canvas ref="historyChart" id="history-chart" width="580" height="200"></canvas>
-			<p class="chart-hint">Останні значення результатів з історії (зліва направо за часом)</p>
-		</section>
-
-		<section class="converter-card">
-			<h2>Історія конвертацій (останні 10)</h2>
-			<p v-if="storageError" id="storage-error" class="error-text">{{ storageError }}</p>
-			<p v-if="history.length === 0" class="empty-text">Історія поки порожня</p>
-			<ul id="history-list" v-else>
-				<li
-					v-for="item in history"
-					:key="item.id"
-					class="history-item"
-					:data-result="item.result"
-					:class="{ 'big-rate': item.result > threshold }"
-				>
-					<div class="history-info">
-						<span>{{ item.amount }} {{ item.from }} = {{ item.result }} {{ item.to }}</span>
-						<small class="history-time">{{ formatTime(item.timestamp) }}</small>
-					</div>
-					<div class="history-actions">
-						<button type="button" class="item-btn" @click="recalculateItem(item)">Оновити</button>
-						<button type="button" class="item-btn item-btn-delete" @click="removeHistoryItem(item.id)">Видалити</button>
-					</div>
-				</li>
-			</ul>
-		</section>
-
-		<section class="converter-card">
-			<h2>Курси валют</h2>
-			<div class="rates-controls">
-				<p id="rates-meta">Базова валюта: {{ metaBase }}, дата: {{ metaDate }}</p>
-				<button type="button" id="refresh-btn" class="refresh-btn" :disabled="loading" @click="loadRates">
-					Оновити
-				</button>
-			</div>
-			<p v-if="loading" id="loading-status" class="status-text">Завантаження...</p>
-			<p v-if="errorMessage" id="error-message" class="error-text">{{ errorMessage }}</p>
-
-			<rates-list :items="rates" :threshold="rateThreshold" @toggle-pin="togglePin"></rates-list>
-
-			<p id="rates-count">Кількість валют у списку: {{ rates.length }}</p>
-		</section>
-	</main>
+	<main id="app" class="layout"></main>
 
 	<footer>
 		<p>Примітка: курс валют є орієнтовним. &copy; 2026</p>

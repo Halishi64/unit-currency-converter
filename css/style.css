@@ -22,10 +22,16 @@ img {
     background-color: #FFFFFF;
     padding: 16px 20px;
     border-bottom: 1px solid #E4E4E7;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.header-inner {
+    max-width: 680px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
 }
 
 .site-header h1 {
@@ -33,6 +39,35 @@ img {
     color: #166534;
     font-size: 1.25rem;
     font-weight: 700;
+    text-align: center;
+}
+
+.site-nav {
+    display: flex;
+    gap: 12px;
+}
+
+.nav-link {
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #3F3F46;
+    background-color: #F4F4F5;
+    border: 1px solid #D4D4D8;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.nav-link:hover {
+    background-color: #E4E4E7;
+    color: #18181B;
+}
+
+.nav-link.active {
+    background-color: #166534;
+    color: #FFFFFF;
+    border-color: #166534;
 }
 
 .layout {
@@ -202,6 +237,15 @@ select:focus {
     transform: translateY(1px);
 }
 
+.link-btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    padding: 0 20px;
+    margin-bottom: 0;
+}
+
 .result-box {
     margin: 0;
     font-size: 1rem;
@@ -219,6 +263,21 @@ select:focus {
     color: #166534;
     font-size: 1.5rem;
     margin-top: 4px;
+}
+
+.saved-notice {
+    margin: 16px 0 0 0;
+    padding: 12px 16px;
+    background-color: #DCFCE7;
+    color: #14532D;
+    border: 1px solid #166534;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-weight: 500;
 }
 
 .rates-controls {
@@ -342,9 +401,14 @@ select:focus {
 .history-actions {
     display: flex;
     gap: 8px;
+    flex-wrap: wrap;
 }
 
 .item-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
     padding: 6px 10px;
     border-radius: 6px;
     border: 1px solid #52525B;
@@ -359,6 +423,15 @@ select:focus {
     background-color: #E4E4E7;
 }
 
+.item-link {
+    border-color: #166534;
+    color: #166534;
+}
+
+.item-link:hover {
+    background-color: #DCFCE7;
+}
+
 .item-btn-delete {
     border-color: #DC2626;
     color: #991B1B;
@@ -366,6 +439,52 @@ select:focus {
 
 .item-btn-delete:hover {
     background-color: #FEE2E2;
+}
+
+.detail-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0 0 24px 0;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background-color: #F4F5F4;
+    border: 1px solid #E4E4E7;
+    border-radius: 8px;
+    flex-wrap: wrap;
+}
+
+.detail-label {
+    font-size: 0.875rem;
+    color: #52525B;
+    font-weight: 500;
+}
+
+.detail-value {
+    font-weight: 700;
+    color: #18181B;
+}
+
+.detail-value-accent {
+    color: #166534;
+    font-size: 1.1rem;
+}
+
+.detail-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.not-found-text {
+    margin: 0 0 20px 0;
+    color: #3F3F46;
 }
 
 #rates-count {
@@ -382,8 +501,14 @@ footer {
 }
 
 @media (min-width: 600px) {
+    .header-inner {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
     .site-header h1 {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
+        text-align: left;
     }
 
     .layout {
@@ -430,5 +555,10 @@ footer {
     .convert-btn {
         width: 50%; 
         margin: 0 auto 24px auto; 
+    }
+
+    .link-btn {
+        width: auto;
+        margin: 0;
     }
 }
