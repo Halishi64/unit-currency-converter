@@ -1,5 +1,5 @@
 // Обрав Vue 3, бо підключається одним скриптом через CDN без Babel і має computed для автоперерахунку
-const API_URL = 'https://api.frankfurter.dev/v1/latest?from=USD&to=EUR';
+const API_URL = '/api/rates';
 
 const STORAGE_KEY = 'converterHistory';
 const MIGRATED_KEY = 'historyMigrated';
